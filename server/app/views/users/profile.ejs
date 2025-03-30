@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/css/profile.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            transition: 0.3s;
+        }
+
+        .dark-mode {
+            background-color: #1e1e1e;
+            color: white;
+        }
+
+        .navbar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 30px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+        }
+
+        .btn {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            margin-left: 10px;
+            border-radius: 5px;
+            background-color: #007bff;
+        }
+
+        .logout {
+            background-color: #ff4d4d;
+        }
+
+        .container {
+            margin-top: 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .dark-mode .card {
+            background: #2c2c2c;
+            color: white;
+        }
+
+        .profile-image img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 3px solid #007bff;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .update-btn,
+        .password-btn,
+        .otp-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+            color: white;
+            border: none;
+        }
+
+        .update-btn {
+            background-color: #ff9800;
+        }
+
+        .password-btn {
+            background-color: #007bff;
+        }
+
+        .otp-btn {
+            background-color: #28a745;
+        }
+
+        #passwordForm {
+            display: none;
+        }
+
+        #card1 {
+            margin-right: 10px;
+        }
+
+        #card2 {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-left: 45px;
+        }
+
+        .theme-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        /* Achievements Section */
+        .badges {
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+            min-width: 140px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .badge:hover {
+            transform: scale(1.1);
+        }
+
+        .gold {
+            background: gold;
+            color: black;
+        }
+
+        .blue {
+            background: #007bff;
+        }
+
+        .green {
+            background: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo">BlogApp</div>
+        <div class="nav-buttons">
+            <a href="/dashboard" class="btn">Back</a>
+            <a href="/logout" class="btn logout">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Profile Update Form -->
+        <div class="card" id="card1">
+            <h2>User Profile</h2>
+            <div class="profile-image">
+                <img id="profilePic" src="<%= image || '/default-profile.png' %>" alt="Profile Image">
+            </div>
+            <form id="profileForm" enctype="multipart/form-data">
+                <input type="file" id="profileImageInput" name="profile" accept="image/*">
+                <input type="text" id="name" name="name" placeholder="Full Name" value="<%= name %>">
+                <textarea id="about" name="about"
+                    placeholder="Write about yourself..."><%= about || 'No bio added yet' %></textarea>
+                <input type="date" id="dob" name="dob" value="<%= dob %>">
+                <input type="email" id="email" name="email" value="<%= email %>" disabled>
+
+                <button type="submit" class="update-btn">Update Profile</button>
+            </form>
+
+            <button class="password-btn" id="togglePasswordForm">Change Password</button>
+        </div>
+
+        <!-- Change Password & Achievements Section -->
+        <div class="card" id="card2">
+            <div id="passwordForm">
+                <h2>Change Password</h2>
+                <button type="button" id="sendOtp" class="otp-btn">Send OTP</button>
+                <form id="changePasswordForm" enctype="multipart/form-data">
+                    <input type="text" id="otp" name="otp" placeholder="Enter OTP" required>
+                    <input type="password" id="newPassword" name="password" placeholder="New Password" required>
+                    <button type="submit" class="otp-btn">Verify & Change</button>
+                </form>
+            </div>
+
+            <button class="theme-btn" id="toggleTheme">Toggle Theme</button>
+
+            <div class="badges">
+                <h3>Your Achievements 🏆</h3>
+                <div class="badge-container">
+                    <div class="badge gold">🏅 Gold Member</div>
+                    <div class="badge blue">✅ Verified Blogger</div>
+                    <div class="badge green">📝 5+ Blog Posts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle Profile Form Submission
+        document.getElementById("profileForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+
+            fetch("/profile", {
+                method: "PUT",
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == 1) {
+                        alert("Profile updated successfully!");
+                        location.reload();
+                    } else {
+                        alert("Error updating profile: " + data.msg);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        });
+
+        // Toggle Change Password Form
+        document.getElementById("togglePasswordForm").addEventListener("click", function () {
+            let passwordForm = document.getElementById("passwordForm");
+            passwordForm.style.display = passwordForm.style.display === "block" ? "none" : "block";
+        });
+
+        const body = document.body;
+        const themeBtn = document.getElementById("toggleTheme");
+
+        // Check if a theme is already saved in localStorage
+        if (localStorage.getItem("theme") === "dark") {
+            body.classList.add("dark-mode");
+        }
+
+        // Toggle theme and save user preference
+        themeBtn.addEventListener("click", function () {
+            body.classList.toggle("dark-mode");
+
+            // Store theme preference in localStorage
+            if (body.classList.contains("dark-mode")) {
+                localStorage.setItem("theme", "dark");
+            } else {
+                localStorage.setItem("theme", "light");
+            }
+        });
+
+        document.getElementById("sendOtp").addEventListener("click", function () {
+            let email = document.getElementById("email").value;
+            fetch("/sendotp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == 1) {
+                        alert("OTP sent to your email!");
+                    } else {
+                        alert("Error sending OTP: " + data.msg);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        });
+
+        document.getElementById("changePasswordForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            let otp = document.getElementById("otp").value;
+            let password = document.getElementById("newPassword").value;
+            
+            fetch("/mcafee", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ otp, password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == 1) {
+                        alert("Password changed successfully!");
+                        location.reload();
+                    } else {
+                        alert("Error changing password: " + data.msg);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        });
+
+    </script>
+
+</body>
+
+</html>

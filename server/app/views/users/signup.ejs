@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            padding: 15px 50px;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar nav ul {
+            list-style: none;
+            display: flex;
+        }
+
+        .navbar nav ul li {
+            margin: 0 15px;
+        }
+
+        .navbar nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .navbar nav ul li a:hover {
+            color: #ff6600;
+        }
+
+        .nav-buttons .btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .sign-in {
+            background: #444;
+            color: white;
+        }
+
+        .sign-up {
+            background: #ff6600;
+            color: white;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 18vh auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .auth-container input,
+        .auth-container button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .auth-container button {
+            background: #ff6600;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #222;
+            color: white;
+            margin-top: 50px;
+        }
+
+        footer .social-links a {
+            color: #ff6600;
+            margin: 0 15px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        footer .social-links a:hover {
+            color: #e55b00;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo">BlogApp</div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="nav-buttons">
+            <a href="#" class="btn sign-in">Sign In</a>
+            <a href="#" class="btn sign-up">Sign Up</a>
+        </div>
+    </header>
+
+    <div class="auth-container">
+        <h2>Sign Up</h2>
+        <form method="POST" id="form" enctype="multipart/form-data">
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required id="email">
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="file" name="profile" accept="image/*" id="Client_picture">           
+            <button type="button" id="sendOtp">Send OTP</button>
+            
+            <input type="number" name="otp" placeholder="Enter OTP" required disabled id="otp">
+            <button type="submit" id="submit" disabled>Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="/login">Sign In</a></p>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 BlogApp. All rights reserved.</p>
+        <div class="social-links">
+            <a href="#">Facebook</a>
+            <a href="#">Twitter</a>
+            <a href="#">Instagram</a>
+        </div>
+    </footer>
+    <script>
+        let form = document.getElementById("form");
+        let sendOtpBtn = document.getElementById("sendOtp");
+        let otpField = document.getElementById("otp");
+        let submitButton = document.getElementById("submit");
+    
+        sendOtpBtn.addEventListener("click", async () => {
+            let email = document.getElementById("email").value.trim();
+    
+            if (!email) {
+                alert("Please enter an email first!");
+                return;
+            }
+    
+                let response = await fetch("/sendOTP", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email }),
+                });
+    
+                let result = await response.json();
+                console.log(result)
+                if (result.status === 1) {
+                    alert("OTP sent successfully!");
+                    otpField.removeAttribute("disabled"); 
+                    submitButton.removeAttribute("disabled");
+                } else {
+                    alert("Failed to send OTP: " + result.message);
+                }
+        });
+    
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault(); 
+    
+            let formData = new FormData(form);
+    
+            try {
+                let response = await fetch("/signUp", {
+                    method: "POST",
+                    body: formData,
+                });
+    
+                let result = await response.json();
+    
+                if (result.status === 1) {
+                    alert("Signup successful!");
+                    form.reset();
+                    otpField.setAttribute("disabled", "true");
+                    submitButton.setAttribute("disabled", "true");
+                } 
+                else if( result.status === 2){
+                    alert("Invalid OTP Entered")
+                }
+                else {
+                    alert("Error: " + result.message);
+                }
+            } catch (error) {
+                console.error("Error submitting form:", error);
+                alert("Something went wrong. Please try again.");
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 30px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .nav-buttons {
+            display: flex;
+        }
+        .btn {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            margin-left: 10px;
+            border-radius: 5px;
+            background-color: #007bff;
+        }
+        .logout {
+            background-color: #ff4d4d;
+        }
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 20px;
+        }
+        .content-wrapper {
+            width: 90%;
+            max-width: 1200px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .blog-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .submit-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .blog-posts {
+            margin-top: 20px;
+        }
+        .post {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .post img {
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">BlogApp</div>
+        <div class="nav-buttons">
+            <a href="/dashboard" class="btn">Back</a>
+            <a href="/logout" class="btn logout">Logout</a>
+        </div>
+    </header>
+    <div class="container">
+        <div class="content-wrapper">
+            <h2>Create a Blog Post</h2>
+            <form class="blog-form" id="blogForm">
+                <input type="text" id="title" placeholder="Title" required>
+                <textarea id="content" placeholder="Write your blog..." rows="5" required></textarea>
+                <input type="file" id="imageUpload" accept="image/*">
+                <button type="submit" class="submit-btn">Post</button>
+            </form>
+            <div class="blog-posts" id="blogPosts"></div>
+        </div>
+    </div>
+    <script>
+        document.getElementById("blogForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let title = document.getElementById("title").value;
+            let content = document.getElementById("content").value;
+            let fileInput = document.getElementById("imageUpload");
+            let imageURL = "";
+            if (fileInput.files.length > 0) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    imageURL = e.target.result;
+                    addPost(title, content, imageURL);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                addPost(title, content, imageURL);
+            }
+        });
+        function addPost(title, content, imageURL) {
+            let postContainer = document.createElement("div");
+            postContainer.classList.add("post");
+            postContainer.innerHTML = `<h3>${title}</h3><p>${content}</p>`;
+            if (imageURL) {
+                let img = document.createElement("img");
+                img.src = imageURL;
+                postContainer.appendChild(img);
+            }
+            document.getElementById("blogPosts").prepend(postContainer);
+            document.getElementById("blogForm").reset();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | BlogApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            padding: 15px 50px;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .profile-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+
+        .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: white;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-btn {
+            background-color: #ff9800;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+            min-width: 100px;
+            text-align: left;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 100px auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            font-size: 26px;
+        }
+
+        .create-blog-btn {
+            background: #ff6600;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .blog-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .blog-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-card h3 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .blog-card p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .actions .left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .actions .right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions .btn {
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .read-more {
+            background: #28a745;
+            color: white;
+        }
+
+        .edit {
+            background: #007bff;
+            color: white;
+        }
+
+        .delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .likes {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ff6600;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo">BlogApp</div>
+        <div class="profile-menu">
+            <div class="profile-icon"><img src="<%=image%>" alt=""></div>
+            <div class="dropdown">
+                <button class="profile-btn">
+                    <%=name%> ▼
+                </button>
+                <div class="dropdown-content">
+                    <a href="/profile">Profile</a>
+                    <a href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="header">
+            <h2>Your Blogs</h2>
+            <a href="/create-blog" class="create-blog-btn">+ New Blog</a>
+        </div>
+
+        <div class="blog-list">
+            <div class="blog-card">
+                <h3>Understanding JavaScript Closures</h3>
+                <p>Closures are an important concept in JavaScript that allows functions to retain access to variables...</p>
+                <div class="actions">
+                    <div class="left">
+                        <a href="/blog/1" class="btn read-more">Read More</a>
+                        <span class="likes">❤️ 12</span>
+                    </div>
+                    <div class="right">
+                        <a href="#" class="btn edit">Edit</a>
+                        <a href="#" class="btn delete">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
