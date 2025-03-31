@@ -1,7 +1,7 @@
 const { Blog } = require("../../models/Blog")
 
 function MyBlogsPage(req,res){
-    res.render('users/myblogs', {name: req.user.username , image: req.user.path})
+    res.render('users/MyBlogs', {name: req.user.username , image: req.user.path})
 }
 
 function CreateBlogPage(req,res){
