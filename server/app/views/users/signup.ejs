@@ -127,8 +127,8 @@
             </ul>
         </nav>
         <div class="nav-buttons">
-            <a href="#" class="btn sign-in">Sign In</a>
-            <a href="#" class="btn sign-up">Sign Up</a>
+            <a href="/signIn" class="btn sign-in">Sign In</a>
+            <a href="/signUp" class="btn sign-up">Sign Up</a>
         </div>
     </header>
 
@@ -139,13 +139,13 @@
             <input type="text" name="username" placeholder="Username" required>
             <input type="email" name="email" placeholder="Email" required id="email">
             <input type="password" name="password" placeholder="Password" required>
-            <input type="file" name="profile" accept="image/*" id="Client_picture">           
+            <input type="file" name="profile" accept="image/*" id="Client_picture">
             <button type="button" id="sendOtp">Send OTP</button>
-            
+
             <input type="number" name="otp" placeholder="Enter OTP" required disabled id="otp">
             <button type="submit" id="submit" disabled>Sign Up</button>
         </form>
-        <p>Already have an account? <a href="/login">Sign In</a></p>
+        <p>Already have an account? <a href="/signIn">Sign In</a></p>
     </div>
 
     <footer>
@@ -161,52 +161,66 @@
         let sendOtpBtn = document.getElementById("sendOtp");
         let otpField = document.getElementById("otp");
         let submitButton = document.getElementById("submit");
-    
+
         sendOtpBtn.addEventListener("click", async () => {
+            sendOtpBtn.innerText = "Sending OTP...";
+            sendOtpBtn.disabled = true; // Corrected
+
             let email = document.getElementById("email").value.trim();
-    
+
             if (!email) {
+                sendOtpBtn.innerText = "Send OTP";
+                sendOtpBtn.disabled = false; // Re-enable button
                 alert("Please enter an email first!");
                 return;
             }
-    
+
+            try {
                 let response = await fetch("/sendOTP", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email }),
                 });
-    
+
                 let result = await response.json();
-                console.log(result)
+
                 if (result.status === 1) {
                     alert("OTP sent successfully!");
-                    otpField.removeAttribute("disabled"); 
+                    sendOtpBtn.innerText = "Send OTP";
+                    otpField.removeAttribute("disabled");
                     submitButton.removeAttribute("disabled");
                 } else {
+                    sendOtpBtn.innerText = "Send OTP";
                     alert("Failed to send OTP: " + result.message);
                 }
+            } catch (error) {
+                alert("An error occurred while sending OTP!");
+            } finally {
+                sendOtpBtn.disabled = false; 
+            }
         });
-    
+
+
         form.addEventListener("submit", async (e) => {
-            e.preventDefault(); 
-    
+            e.preventDefault();
+
             let formData = new FormData(form);
-    
+
             try {
                 let response = await fetch("/signUp", {
                     method: "POST",
                     body: formData,
                 });
-    
+
                 let result = await response.json();
-    
+
                 if (result.status === 1) {
                     alert("Signup successful!");
                     form.reset();
                     otpField.setAttribute("disabled", "true");
                     submitButton.setAttribute("disabled", "true");
-                } 
-                else if( result.status === 2){
+                }
+                else if (result.status === 2) {
                     alert("Invalid OTP Entered")
                 }
                 else {
@@ -215,6 +229,11 @@
             } catch (error) {
                 console.error("Error submitting form:", error);
                 alert("Something went wrong. Please try again.");
+            }
+        });
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                location.reload(); // Force reload when navigating back
             }
         });
     </script>

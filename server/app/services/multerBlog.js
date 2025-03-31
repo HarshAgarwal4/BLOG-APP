@@ -1,4 +1,6 @@
 let multer = require('multer')
+let fs = require('fs')
+let path = require('path')
 
 let storageBlogPic = multer.diskStorage({
     destination: "./uploads/blogpostPics",

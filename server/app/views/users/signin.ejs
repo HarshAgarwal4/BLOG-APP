@@ -128,8 +128,8 @@
             </ul>
         </nav>
         <div class="nav-buttons">
-            <a href="/login" class="btn sign-in">Sign In</a>
-            <a href="/signup" class="btn sign-up">Sign Up</a>
+            <a href="/signIn" class="btn sign-in">Sign In</a>
+            <a href="/signUp" class="btn sign-up">Sign Up</a>
         </div>
     </header>
 
@@ -140,7 +140,7 @@
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Sign In</button>
         </form>
-        <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+        <p>Don't have an account? <a href="/signUp">Sign Up</a></p>
     </div>
 
     <!-- Footer -->
@@ -152,6 +152,13 @@
             <a href="#">Instagram</a>
         </div>
     </footer>
+    <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                location.reload(); // Force reload when navigating back
+            }
+        });
+    </script>
 </body>
 
 </html>

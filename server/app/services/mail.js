@@ -27,7 +27,6 @@ async function sendOTP(email) {
 
     try {
         await transporter.sendMail(mailOptions);
-        console.log(`OTP sent to ${email}: ${otp}`);
         return { success: true, message: "OTP sent successfully" };
     } catch (error) {
         console.error("Error sending OTP:", error);
@@ -37,7 +36,6 @@ async function sendOTP(email) {
 
 async function verifyOTP(email, userOTP) {
     const storedOTP = otpStorage.get(email);
-    console.log(storedOTP);
     if (storedOTP && storedOTP === userOTP) {
         otpStorage.delete(email);
         return { success: true, message: "OTP verified successfully" };

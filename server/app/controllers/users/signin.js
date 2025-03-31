@@ -14,7 +14,7 @@ async function signIn(req,res) {
                 secure: true,
                 sameSite: "Strict"
             });
-            res.render("users/dashboard" , {name: findUser.username, image: findUser.path})
+            res.redirect('/dashboard')  
         }else{
             res.send({status: 0, msg: "invalid email or password"})
         }
@@ -24,6 +24,10 @@ async function signIn(req,res) {
 }
 
 function signInPage(req,res){
+    let cookies = req.cookies?.UID;
+    if (cookies) {
+        res.clearCookie('UID'); 
+    }
     res.render("users/signin")
 }
 

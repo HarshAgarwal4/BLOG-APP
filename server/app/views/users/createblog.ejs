@@ -50,7 +50,6 @@
             background-color: #ff4d4d;
         }
         .container {
-            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -58,6 +57,7 @@
             padding: 100px 20px 20px;
         }
         .content-wrapper {
+            height: 75vh;
             width: 90%;
             max-width: 1200px;
             background: white;
@@ -116,33 +116,40 @@
     <div class="container">
         <div class="content-wrapper">
             <h2>Create a Blog Post</h2>
-            <form class="blog-form" id="blogForm">
-                <input type="text" id="title" placeholder="Title" required>
-                <textarea id="content" placeholder="Write your blog..." rows="5" required></textarea>
-                <input type="file" id="imageUpload" accept="image/*">
+            <form class="blog-form" id="blogForm" enctype="multipart/form-data">
+                <input type="text" id="title" name = "title" placeholder="Title" required>
+                <textarea id="content" name="content" placeholder="Write your blog..." rows="20" required></textarea>
+                <input type="file" id="imageUpload" name="BlogPic" accept="image/*">
                 <button type="submit" class="submit-btn">Post</button>
             </form>
             <div class="blog-posts" id="blogPosts"></div>
         </div>
     </div>
     <script>
-        document.getElementById("blogForm").addEventListener("submit", function(event) {
+        document.getElementById("blogForm").addEventListener("submit", async function(event) {
             event.preventDefault();
-            let title = document.getElementById("title").value;
-            let content = document.getElementById("content").value;
-            let fileInput = document.getElementById("imageUpload");
-            let imageURL = "";
-            if (fileInput.files.length > 0) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    imageURL = e.target.result;
-                    addPost(title, content, imageURL);
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                addPost(title, content, imageURL);
+            let formData = new FormData(this);
+            try {
+                let response = await fetch("/postblog", {
+                    method: "POST",
+                    body: formData,
+                });
+    
+                let result = await response.json();
+    
+                if (result.status === 1) {
+                    alert("Blog Posted Successfully!");
+                    document.getElementById("blogForm").reset();
+                } 
+                else {
+                    alert("Error: " + result.message);
+                }
+            } catch (error) {
+                console.error("Error in adding post:", error);
+                alert("Something went wrong. Please try again.");
             }
         });
+
         function addPost(title, content, imageURL) {
             let postContainer = document.createElement("div");
             postContainer.classList.add("post");

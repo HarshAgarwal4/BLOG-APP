@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Read Blog</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-top: 70px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            padding: 15px 50px;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .profile-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+
+        .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: white;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-btn {
+            background-color: #ff9800;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+            min-width: 100px;
+            text-align: left;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .blog-image {
+            width: 100%;
+            height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .blog-title {
+            font-size: 24px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .blog-content {
+            font-size: 16px;
+            margin-bottom: 20px;
+            white-space: pre-wrap; /* Preserves line breaks */
+        }
+
+        /* Like Section Styling */
+        .like-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px; /* Increased spacing */
+            padding: 10px;
+            border-radius: 5px;
+            background: #f9f9f9; /* Light background */
+        }
+
+        .like-btn {
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #e63946;
+        }
+
+        .like-btn:hover {
+            color: #c91d2b;
+        }
+
+        /* Comment Section Styling */
+        .comment-section {
+            margin-top: 30px; /* More space from like section */
+            padding: 20px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .comment-box {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .submit-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .submit-btn:hover {
+            background: #0056b3;
+        }
+
+        #comments {
+            margin-top: 15px;
+            padding: 10px;
+        }
+
+        .comment {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 8px;
+            border-left: 4px solid #007bff;
+        }
+
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">BlogApp</div>
+        <div class="profile-menu">
+            <div class="profile-icon"><img src="<%= Uimage %>" alt=""></div>
+            <div class="dropdown">
+                <button class="profile-btn">
+                    <%= name %> ▼
+                </button>
+                <div class="dropdown-content">
+                    <a href="/profile">Profile</a>
+                    <a href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <img src="<%= Bimage %>" alt="Blog Image" class="blog-image">
+        <h2 class="blog-title"><%= title %></h2>
+        <p class="blog-content"><%= content %></p>
+
+        <!-- Like Section -->
+        <div class="like-section">
+            <button class="like-btn" onclick="likePost()"><i class="fa fa-heart"></i></button>
+            <span class="like-count">0</span> Likes
+        </div>
+
+        <!-- Comment Section -->
+        <div class="comment-section">
+            <h3>Comments</h3>
+            <div id="comments"></div>
+            <textarea class="comment-box" id="commentInput" placeholder="Add a comment..."></textarea>
+            <button class="submit-btn" onclick="addComment()">Post Comment</button>
+        </div>
+    </div>
+
+    <script>
+        let likes = 0;
+        function likePost() {
+            likes++;
+            document.querySelector(".like-count").innerText = likes;
+        }
+
+        function addComment() {
+            let commentText = document.getElementById("commentInput").value;
+            if (commentText.trim() === "") return;
+            let commentDiv = document.createElement("div");
+            commentDiv.classList.add("comment");
+            commentDiv.innerText = commentText;
+            document.getElementById("comments").appendChild(commentDiv);
+            document.getElementById("commentInput").value = "";
+        }
+    </script>
+</body>
+</html>

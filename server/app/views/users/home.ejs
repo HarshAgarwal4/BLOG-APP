@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlogApp - Home</title>
     <link rel="stylesheet" href="../css/home.css">
 </head>
+
 <body>
     <!-- Navbar -->
     <header class="navbar">
         <div class="logo">BlogApp</div>
         <nav>
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="#categories">Categories</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Categories</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
             </ul>
         </nav>
         <div class="nav-buttons">
@@ -30,8 +32,8 @@
             <h1>Welcome to BlogApp</h1>
             <p>Explore the best articles, insights, and stories from around the world.</p>
             <div class="hero-buttons">
-                <a href="#" class="btn sign-in">Sign In</a>
-                <a href="#" class="btn sign-up">Sign Up</a>
+                <a href="/signIn" class="btn sign-in">Sign In</a>
+                <a href="/signUp" class="btn sign-up">Sign Up</a>
             </div>
         </div>
     </section>
@@ -41,16 +43,16 @@
         <h2>Trending Blogs</h2>
         <div class="blog-container">
             <div class="blog-card">
-                <img src="https://source.unsplash.com/400x250/?writing,blog" alt="Blog 1">
+                <img src="assets/images/blog.jpg" alt="Blog 1">
                 <h3>Mastering the Art of Blogging</h3>
                 <p>Discover key strategies to make your blog stand out.</p>
-                <a href="#" class="read-more">Read More</a>
+                <a href="/blog/67ea27ea9c2bd5fdc009d091" class="read-more">Read More</a>
             </div>
             <div class="blog-card">
-                <img src="https://source.unsplash.com/400x250/?technology,coding" alt="Blog 2">
+                <img src="assets/images/web.jpg" alt="Blog 2">
                 <h3>The Future of Web Development</h3>
                 <p>Latest trends and technologies shaping the future.</p>
-                <a href="#" class="read-more">Read More</a>
+                <a href="/blog/67ea3e909daf79b8df028d8b" class="read-more">Read More</a>
             </div>
         </div>
     </section>
@@ -64,5 +66,13 @@
             <a href="#">Instagram</a>
         </div>
     </footer>
+    <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                location.reload(); // Force reload when navigating back
+            }
+        });
+    </script>
 </body>
+
 </html>

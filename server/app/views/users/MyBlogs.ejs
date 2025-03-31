@@ -99,19 +99,24 @@
             padding: 20px;
         }
 
-        .search-bar {
+        .header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
 
-        .search-bar input {
-            width: 100%;
-            max-width: 600px;
-            padding: 10px;
+        .header h2 {
+            font-size: 26px;
+        }
+
+        .create-blog-btn {
+            background: #ff6600;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
             border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .blog-list {
@@ -175,6 +180,7 @@
         .delete {
             background: #dc3545;
             color: white;
+            cursor: pointer;
         }
 
         .likes {
@@ -196,7 +202,6 @@
                 </button>
                 <div class="dropdown-content">
                     <a href="/profile">Profile</a>
-                    <a href="/myblogs">My Blogs</a>
                     <a href="/logout">Logout</a>
                 </div>
             </div>
@@ -204,85 +209,89 @@
     </header>
 
     <div class="container">
-        <div class="search-bar">
-            <input type="search" id="searchInput" placeholder="Search for blogs..." oninput="searchBlogs()">
+        <div class="header">
+            <h2>Your Blogs</h2>
+            <a href="/create-blog" class="create-blog-btn">+ New Blog</a>
         </div>
 
-        <div class="blog-list">
+        <div class="blog-list" id="blog-list">
             <!-- <div class="blog-card">
                 <h3>Understanding JavaScript Closures</h3>
-                <p>Closures are an important concept in JavaScript that allows functions to retain access to
-                    variables...</p>
+                <p>Closures are an important concept in JavaScript that allows functions to retain access to variables...</p>
                 <div class="actions">
                     <div class="left">
                         <a href="/blog/1" class="btn read-more">Read More</a>
+                        <span class="likes">❤️ 12</span>
                     </div>
                     <div class="right">
-                        <img src="" alt="">
+                        <a href="#" class="btn edit">Edit</a>
+                        <a href="#" class="btn delete">Delete</a>
                     </div>
                 </div>
             </div> -->
         </div>
     </div>
     <script>
-        function createblogcard(title, content, id, path) {
-            let html = `<div class="blog-card">
-            <h3>${title}</h3>
-            <p>${content.slice(0, 100)}...</p>
-            <div class="actions">
-                <div class="left">
-                    <a href="/blog/${id}" class="btn read-more">Read More</a>
-                </div>
-                <div class="right">
-                    <img src="${path}" alt="Blog Image" style="width: 50px; height: 50px; border-radius: 5px;">
-                </div>
-            </div>
-        </div>`;
+        function createblogcard(title, content, id) {
+            let html = `<div class="blog-card" id="${id}">
+                      <h3>${title}</h3>
+                    <p>${content.slice(0, 100)}...</p>
+                    <div class="actions">
+                              <div class="left">
+                <a href="/blog/${id}" class="btn read-more">Read More</a>
+                    </div>
+                  <div class="right">
+                <button class="btn delete" onclick="deleteBlog('${id}')">Delete</button>
+                 </div>
+                 </div>
+              </div>`;
 
             let bloglist = document.querySelector(".blog-list");
             bloglist.insertAdjacentHTML("beforeend", html);
         }
 
-        async function loadallBlogPosts() {
-            try {
-                let response = await fetch("/getallblogs");
-                let data = await response.json();
 
-                let blogPostsContainer = document.querySelector(".blog-list");
-                blogPostsContainer.innerHTML = "";
-
-                if (data.status === 1 && data.blogs.length > 0) {
-                    let reversedBlogs = data.blogs.reverse();
-                    reversedBlogs.forEach(post => {
-                        createblogcard(post.title, post.content, post._id, post.path || "default.jpg");
-                    });
-                } else {
-                    blogPostsContainer.innerHTML = "<h3>No blogs available</h3>";
+        async function loadMyBlogPosts() {
+            let response = await fetch("/getblogs");
+            let data = await response.json();
+            if (data.status == 1) {
+                let blogPosts = data.blogs;
+                if(blogPosts.length == 0) {
+                    let blogPostsContainer = document.getElementById("blog-list");
+                    blogPostsContainer.innerHTML = "<h3>YOU HAVE NOT POSTED ANY BLOG YET</h3>";
+                    return;
                 }
-            } catch (error) {
-                console.error("Failed to load blogs:", error);
+                let blogPostsContainer = document.getElementById("blog-list");
+                blogPostsContainer.innerHTML = "";
+                blogPosts.forEach(post => {
+                    createblogcard(post.title, post.content, post._id);
+                });
+            } else {
+                console.error("Failed to load blogs:", data.message);
                 alert("Error loading blogs. Please try again.");
             }
         }
 
-        function searchBlogs() {
-            let input = document.getElementById("searchInput").value.toLowerCase();
-            let blogCards = document.querySelectorAll(".blog-card");
+        async function deleteBlog(id) {
+            try {
+                let response = await fetch(`/blog/${id}`, {
+                    method: "DELETE"
+                });
 
-            blogCards.forEach(card => {
-                let title = card.querySelector("h3").innerText.toLowerCase();
-                let content = card.querySelector("p").innerText.toLowerCase();
+                let data = await response.json();
 
-                if (title.includes(input) || content.includes(input)) {
-                    card.style.display = "block"; // Show matching blogs
+                if (data.status == 1) {
+                    alert("Deleted successfully");
                 } else {
-                    card.style.display = "none"; // Hide non-matching blogs
+                    alert("Not deleted. Please retry.");
                 }
-            });
+            } catch (err) {
+                alert("Error: " + err);
+            }
         }
 
 
-        loadallBlogPosts();
+        loadMyBlogPosts()
     </script>
 </body>
 

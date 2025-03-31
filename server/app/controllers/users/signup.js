@@ -4,9 +4,8 @@ const fs = require("fs");
 const path = require("path");
 
 async function signup(req, res) {
-    console.log("Received file:", req.file); // Debugging file upload
 
-    let filePath = req.file ? req.file.path : "/uploads/default-profile.png"; // Default image
+    let filePath = req.file ? `/uploads/${req.file.filename}` : "/assets/images/default-profile.png"; 
 
     let otpVerification = await verifyOTP(req.body.email, req.body.otp);
     if (otpVerification.success) {
@@ -33,11 +32,14 @@ async function signup(req, res) {
 
 
 function signUpPage(req, res) {
+    let cookies = req.cookies?.UID;
+    if (cookies) {
+        res.clearCookie('UID'); 
+    }
     res.render("users/signup");
 }
 
 async function sendotptoemail(req, res) {
-    console.log(req.body.email);
     let r = await sendOTP(req.body.email);
 
     if (r.success) {
