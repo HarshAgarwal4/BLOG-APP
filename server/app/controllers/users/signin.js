@@ -16,10 +16,10 @@ async function signIn(req,res) {
             });
             res.redirect('/dashboard')  
         }else{
-            res.send({status: 0, msg: "invalid email or password"})
+            res.redirect("/signIn")
         }
     }else{
-        res.send({status: 0, msg: "invalid email or password"})
+        res.redirect("/signIn")
     }
 }
 
