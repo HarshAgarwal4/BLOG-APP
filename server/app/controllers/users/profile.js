@@ -16,8 +16,6 @@ async function updateProfile(req, res) {
         dob: dob || req.user.dob,
         path: req.file ? req.file.path : req.user.path // Ensure req.file is not undefined
     };
-    console.log(user);
-    console.log(req.user.id);
     
     try {
         let updateUser = await userModel.findOneAndUpdate(
