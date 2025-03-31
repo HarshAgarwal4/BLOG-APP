@@ -5,7 +5,7 @@ const path = require("path");
 
 async function signup(req, res) {
 
-    let filePath = req.file ? `/uploads/${req.file.filename}` : "/assets/images/default-profile.png"; 
+    let filePath = req.file ? req.file.path : "/assets/images/default-profile.png"; 
 
     let otpVerification = await verifyOTP(req.body.email, req.body.otp);
     if (otpVerification.success) {

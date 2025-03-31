@@ -19,21 +19,27 @@ async function readBlog(req, res) {
 
 async function deleteBlog(req, res) {
     let BlogId = req.params.id;
-    
-    try {
-        let dele = await Blog.deleteOne({ _id: BlogId });
-        console.log(dele);
 
-        if (dele.deletedCount === 1) {
-            res.send({ status: 1, msg: "Blog deleted successfully" });
-        } else {
-            res.send({ status: 0, msg: "Blog not found or already deleted" });
+    try {
+        // Find and delete the blog in a single step
+        let blog = await Blog.findOneAndDelete({ _id: BlogId });
+        if (!blog) {
+            return res.send({ status: 0, msg: "Blog not found or already deleted" });
         }
+        if (blog.path) {
+            fs.unlink(blog.path, (err) => {
+                if (err) {
+                    console.error("Error deleting blog image:", err);
+                } else {
+                    console.log("Blog image deleted successfully");
+                }
+            });
+        }
+        res.send({ status: 1, msg: "Blog deleted successfully" });
     } catch (error) {
         console.error(error);
         res.send({ status: 0, msg: "Something went wrong" });
     }
 }
 
-
-module.exports = { readBlog , deleteBlog};
+module.exports = { readBlog, deleteBlog };

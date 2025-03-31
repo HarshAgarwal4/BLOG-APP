@@ -1,13 +1,12 @@
 const { Blog } = require("../../models/Blog");
 
 function dashboard(req,res){
-    res.render('users/dashboard', {name: req.user.username , image: req.user.path})
+    res.render('users/dashboard', {name: req.user.username , image:req.user.path})
 }
 
 async function getAllBlogs(req, res) {
     try {
         let blogs = await Blog.find();
-
         if (blogs.length > 0) {
             res.json({ status: 1, blogs });
         } else {
