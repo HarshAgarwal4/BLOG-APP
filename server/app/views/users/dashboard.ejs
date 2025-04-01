@@ -225,6 +225,12 @@
         </div>
     </div>
     <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                location.reload(); // Force reload when navigating back
+            }
+        });
+
         function createblogcard(title, content, id, path) {
             let html = `<div class="blog-card">
             <h3>${title}</h3>

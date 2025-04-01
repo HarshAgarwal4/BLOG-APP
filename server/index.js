@@ -40,7 +40,7 @@ app.use("/", logoutRoute);
 const DB_URL = process.env.DB_URL;
 
 if (!DB_URL) {
-    console.error("❌ MongoDB Connection String is missing in .env file");
+    console.error("MongoDB Connection String is missing in .env file");
     process.exit(1);
 }
 

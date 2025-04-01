@@ -282,6 +282,7 @@
 
                 if (data.status == 1) {
                     alert("Deleted successfully");
+                    document.getElementById(id).remove();
                 } else {
                     alert("Not deleted. Please retry.");
                 }
