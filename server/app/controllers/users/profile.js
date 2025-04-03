@@ -4,6 +4,7 @@ const { sendOTP, verifyOTP } = require("../../services/mail");
 let fs = require('fs')
 let path = require('path')
 let bcrypt = require("bcrypt");
+const { deleteImageByUrl } = require("../../services/multerProfile");
 
 function profile(req, res) {
     res.render("users/profile", { id: req.user._id, name: req.user.name, image: req.user.path, email: req.user.email, about: req.user.about, dob: req.user.dob })
@@ -14,9 +15,7 @@ async function updateProfile(req, res) {
 
     if (req.file.path) {
         if(req.user.path !== "/assets/images/default-profile.png"){
-            fs.unlink(req.user.path, (err) => {
-                if (err) console.error("Error deleting old profile photo:", err); else console.log("Old profile photo deleted successfully");
-            })
+            deleteImageByUrl(req.user.path)
         }
     }
     

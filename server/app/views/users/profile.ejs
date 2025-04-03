@@ -265,8 +265,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status == 1) {
-                        alert("Profile updated successfully!");
-                        location.reload();
+                        alert("Profile updated successfully. You will be logged out automatically. Please log in again to continue");
+                        window.location.href = "/logout"
                     } else {
                         alert("Error updating profile: " + data.msg);
                     }

@@ -2,10 +2,11 @@ const { userModel } = require("../../models/user");
 const { sendOTP, verifyOTP } = require("../../services/mail");
 const fs = require("fs");
 const path = require("path");
+const { cloudinary } = require("../../services/multerProfile");
 
 async function signup(req, res) {
 
-    let filePath = req.file ? req.file.path : "/assets/images/default-profile.png"; 
+    let filePath = req.file ? req.file.path : "/assets/images/default-profile.png";
 
     let otpVerification = await verifyOTP(req.body.email, req.body.otp);
     if (otpVerification.success) {
@@ -18,11 +19,17 @@ async function signup(req, res) {
             res.send({ status: 1, msg: "User registered successfully" });
         } catch (err) {
             console.log("Error saving user:", err);
-            if (req.file) {
-                fs.unlink(filePath, (error) => {
-                    if (error) console.error("Error deleting file:", error);
-                });
+            if (req.file && req.file.path.includes("cloudinary.com")) {
+                let publicId = req.file.path.split('/upload/')[1].split('.')[0];
+                console.log("Extracted Cloudinary Public ID:", publicId);
+                try {
+                    await cloudinary.uploader.destroy(publicId, { invalidate: true });
+                    console.log("Cloudinary image deleted due to signup failure.");
+                } catch (deleteErr) {
+                    console.error("Error deleting Cloudinary image:", deleteErr);
+                }
             }
+
             res.send({ status: 0, msg: "Unknown error occurred", error: err });
         }
     } else {
@@ -34,7 +41,7 @@ async function signup(req, res) {
 function signUpPage(req, res) {
     let cookies = req.cookies?.UID;
     if (cookies) {
-        res.clearCookie('UID'); 
+        res.clearCookie('UID');
     }
     res.render("users/signup");
 }
