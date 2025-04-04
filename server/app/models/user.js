@@ -26,7 +26,7 @@ let userSchema = new mongoose.Schema({
     },
     about:{
         type:String,
-        default: "Ypu have not added any about yet"
+        default: "You have not added any about yet"
     },
     dob:{
         type: Date
