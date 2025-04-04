@@ -2,7 +2,7 @@ const { userModel } = require("../../models/user");
 const { sendOTP, verifyOTP } = require("../../services/mail");
 const fs = require("fs");
 const path = require("path");
-const { cloudinary } = require("../../services/multerProfile");
+const { cloudinary, deleteImageByUrl } = require("../../services/multerProfile");
 
 async function signup(req, res) {
 
@@ -19,21 +19,17 @@ async function signup(req, res) {
             res.send({ status: 1, msg: "User registered successfully" });
         } catch (err) {
             console.log("Error saving user:", err);
-            if (req.file && req.file.path.includes("cloudinary.com")) {
-                let publicId = req.file.path.split('/upload/')[1].split('.')[0];
-                console.log("Extracted Cloudinary Public ID:", publicId);
-                try {
-                    await cloudinary.uploader.destroy(publicId, { invalidate: true });
-                    console.log("Cloudinary image deleted due to signup failure.");
-                } catch (deleteErr) {
-                    console.error("Error deleting Cloudinary image:", deleteErr);
-                }
+            if (req.file){
+                deleteImageByUrl(req.file.path);
             }
 
             res.send({ status: 0, msg: "Unknown error occurred", error: err });
         }
     } else {
         res.send({ status: 2, msg: "Enter correct OTP" });
+        if (req.file){
+            deleteImageByUrl(req.file.path);
+        }
     }
 }
 
