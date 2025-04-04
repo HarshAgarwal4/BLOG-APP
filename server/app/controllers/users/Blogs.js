@@ -1,13 +1,14 @@
 const { Blog } = require('../../models/Blog');
 let fs = require('fs');
 let path = require('path');
+const { deleteBlogImageByBlogUrl } = require('../../services/multerBlog');
 
 async function readBlog(req, res) {
     let BlogId = req.params.id;
     try{
-        let Uimage = `/` + req.user.path;
+        let Uimage = req.user.path;
         let blog = await Blog.findById(BlogId);
-        let Bimage = `/` + blog.path;
+        let Bimage = blog.path;
         let obj = {
             name: req.user.username,
             title: blog.title,
@@ -31,13 +32,12 @@ async function deleteBlog(req, res) {
             return res.send({ status: 0, msg: "Blog not found or already deleted" });
         }
         if (blog.path) {
-            fs.unlink(blog.path, (err) => {
-                if (err) {
-                    console.error("Error deleting blog image:", err);
-                } else {
-                    console.log("Blog image deleted successfully");
-                }
-            });
+            try{
+            await deleteBlogImageByBlogUrl(blog.path)
+            }
+            catch(err){
+                console.error("Error deleting Blog image from Cloudinary:", err);
+            }
         }
         res.send({ status: 1, msg: "Blog deleted successfully" });
     } catch (error) {

@@ -13,7 +13,7 @@ function profile(req, res) {
 async function updateProfile(req, res) {
     let { name, about, dob } = req.body;
 
-    if (req.file.path) {
+    if (req.file && req.file.path) {
         if(req.user.path !== "/assets/images/default-profile.png"){
             deleteImageByUrl(req.user.path)
         }
@@ -55,7 +55,6 @@ async function sendotp(req, res) {
 }
 
 async function updatePassword(req, res) {
-    let email = req.user.email
     let r = await verifyOTP(email, otp)
     if (r.success == true) {
         const salt = await bcrypt.genSalt(10);

@@ -61,16 +61,11 @@ async function deleteImageByUrl(imageUrl) {
     try {
         if (!imageUrl) throw new Error("Image URL is required");
 
-        // Extract the public ID (removes 'upload/vXXXXXXXXXX/' and file extension)
         let match = imageUrl.match(/\/upload\/(?:v\d+\/)?([^\.]+)/);
         if (!match || !match[1]) throw new Error("Invalid Cloudinary URL format");
 
-        let publicId = match[1];  // Extracted public ID
-        console.log("Extracted Public ID:", publicId);
-
-        // Attempt to delete the image from Cloudinary
+        let publicId = match[1];  
         let result = await cloudinary.uploader.destroy(publicId);
-        console.log("Cloudinary deletion response:", result);
 
         return result;
     } catch (error) {

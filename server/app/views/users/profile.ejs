@@ -221,7 +221,7 @@
                 <input type="date" id="dob" name="dob" value="<%= dob %>">
                 <input type="email" id="email" name="email" value="<%= email %>" disabled>
 
-                <button type="submit" class="update-btn">Update Profile</button>
+                <button type="submit" class="update-btn" id="update-btn">Update Profile</button>
             </form>
 
             <button class="password-btn" id="togglePasswordForm">Change Password</button>
@@ -253,8 +253,10 @@
     </div>
 
     <script>
-        // Handle Profile Form Submission
+        let update = document.getElementById("update-btn")
         document.getElementById("profileForm").addEventListener("submit", function (event) {
+            update.innerText = "Updating..."
+            update.disabled = true;
             event.preventDefault();
             let formData = new FormData(this);
 
@@ -267,11 +269,19 @@
                     if (data.status == 1) {
                         alert("Profile updated successfully. You will be logged out automatically. Please log in again to continue");
                         window.location.href = "/logout"
+                        update.innerText = "Update Profile"
+                        update.disabled = false;
                     } else {
                         alert("Error updating profile: " + data.msg);
+                        update.innerText = "Update Profile"
+                        update.disabled = false;
                     }
                 })
-                .catch(error => console.error("Error:", error));
+                .catch(error => {
+                    console.error("Error:", error)
+                    update.innerText = "Update Profile"
+                    update.disabled = false;
+                });
         });
 
         // Toggle Change Password Form
@@ -325,7 +335,7 @@
 
             let otp = document.getElementById("otp").value;
             let password = document.getElementById("newPassword").value;
-            
+
             fetch("/mcafee", {
                 method: "PUT",
                 headers: {

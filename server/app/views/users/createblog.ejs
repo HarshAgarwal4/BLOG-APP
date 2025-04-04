@@ -120,13 +120,16 @@
                 <input type="text" id="title" name = "title" placeholder="Title" required>
                 <textarea id="content" name="content" placeholder="Write your blog..." rows="20" required></textarea>
                 <input type="file" id="imageUpload" name="BlogPic" accept="image/*">
-                <button type="submit" class="submit-btn">Post</button>
+                <button type="submit" class="submit-btn" id="create">Post</button>
             </form>
             <div class="blog-posts" id="blogPosts"></div>
         </div>
     </div>
     <script>
         document.getElementById("blogForm").addEventListener("submit", async function(event) {
+            let c= document.getElementById("create")
+            c.innerText = "Posting..."
+            c.disabled = true;
             event.preventDefault();
             let formData = new FormData(this);
             try {
@@ -139,14 +142,20 @@
     
                 if (result.status === 1) {
                     alert("Blog Posted Successfully!");
+                    c.innerText = "Post"
+                    c.disabled = false;
                     document.getElementById("blogForm").reset();
                 } 
                 else {
                     alert("Error: " + result.message);
+                    c.innerText = "Post"
+                    c.disabled = false;
                 }
             } catch (error) {
                 console.error("Error in adding post:", error);
                 alert("Something went wrong. Please try again.");
+                c.innerText = "Post"
+                c.disabled = false;
             }
         });
 
