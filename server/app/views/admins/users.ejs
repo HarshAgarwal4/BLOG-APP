@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Manage Users</title>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background: linear-gradient(to right, #1f1c2c, #928dab);
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            color: white;
+            height: 100%;
+            padding: 20px;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav .active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content */
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
+            height: 100vh;
+            overflow-y: auto;
+            color: white;
+        }
+
+        /* User Table */
+        .user-table {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .user-table h2 {
+            margin-bottom: 10px;
+        }
+
+        .total-users {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #f1f1f1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        td button {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        td button:hover {
+            background: darkred;
+        }
+
+        .user-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .content {
+                margin-left: 220px;
+                width: calc(100% - 220px);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .sidebar {
+                width: 100px;
+                padding: 10px;
+            }
+
+            .sidebar h2 {
+                font-size: 16px;
+            }
+
+            .sidebar nav a {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .content {
+                margin-left: 120px;
+                width: calc(100% - 120px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2>Admin Panel</h2>
+        <nav>
+            <a href="/admin" class="active">Profile</a>
+            <a href="/admin/blogs">Manage Blogs</a>
+            <a href="/admin/users">Manage Users</a>
+            <a href="/dashboard">Act as user</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+        <div class="user-table">
+            <h2>Manage Users</h2>
+            <p class="total-users">Total Users: <span id="user-count">0</span></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Profile</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table">
+                    <!-- Users will be loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <script>
+        let users = []; // Define users globally
+
+        async function getusers() {
+            try {
+                let response = await fetch("/admin/showUsers");
+                let data = await response.json();
+                if (data.status == 1) {
+                    users = data.users;
+                    loadUsers(); 
+                } else {
+                    alert("Failed to load users.");
+                }
+            } catch (err) {
+                console.error("Error fetching users:", err);
+                alert("Error fetching users. Please try again.");
+            }
+        }
+
+        function loadUsers() {
+            const table = document.getElementById("user-table");
+            const userCount = document.getElementById("user-count");
+            table.innerHTML = ""; // Clear existing content
+
+            if (users.length === 0) {
+                table.innerHTML = "<tr><td colspan='6'>No users found.</td></tr>";
+                return;
+            }
+
+            users.forEach(user => {
+                let row = `<tr>
+                    <td><img src="${user.path}" class="user-img"></td>
+                    <td>${user.name}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>${user.role}</td>
+                    <td><button onclick="deleteUser('${user.username}')">Delete</button></td>
+                </tr>`;
+                table.innerHTML += row;
+            });
+
+            userCount.innerText = users.length;
+        }
+
+        function deleteUser(email) {
+            const confirmDelete = confirm(`Are you sure you want to delete ${username}?`);
+            if (confirmDelete) {
+                alert(`User ${username} deleted.`);
+            }
+        }
+
+        // Fetch and load users on page load
+        window.onload = getusers;
+    </script>
+</body>
+
+</html>

@@ -13,6 +13,7 @@ const { MyBlogsRoute } = require('./app/routes/users/MyBlogs');
 const { BlogRoute } = require('./app/routes/users/Blogs');
 const { dashboardRoute } = require('./app/routes/users/dashboard');
 const { logoutRoute } = require('./app/routes/users/logout');
+const { adminRoute } = require('./app/routes/admins/admin');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/", MyBlogsRoute);
 app.use("/", BlogRoute);
 app.use("/", dashboardRoute);
 app.use("/", logoutRoute);
+app.use("/", adminRoute)
 
 // MongoDB Connection
 const DB_URL = process.env.DB_URL;

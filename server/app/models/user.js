@@ -30,6 +30,11 @@ let userSchema = new mongoose.Schema({
     },
     dob:{
         type: Date
+    },
+    role:{
+        type: String,
+        required: true,
+        default: "NORMAL"
     }
 })
 

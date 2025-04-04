@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Manage Blogs</title>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+            background: linear-gradient(to right, #1f1c2c, #928dab);
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            color: white;
+            height: 100%;
+            padding: 20px;
+            position: fixed;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+        .sidebar nav a:hover,
+        .sidebar nav .active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content */
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
+            overflow-y: auto;
+            color: white;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 300px;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        /* Blog Cards */
+        .blog-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .blog-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+            color: white;
+        }
+
+        .blog-card:hover {
+            transform: scale(1.02);
+        }
+
+        .blog-card img {
+            width: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .blog-card h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .blog-card p {
+            font-size: 14px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .read-more {
+            background: #28a745;
+            color: white;
+        }
+
+        .delete {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2>Admin Panel</h2>
+        <nav>
+            <a href="/admin" class="active">Profile</a>
+            <a href="/admin/blogs">Manage Blogs</a>
+            <a href="/admin/users">Manage Users</a>
+            <a href="/dashboard">Act as user</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+        <div class="header">
+            <h2>Manage Blogs</h2>
+            <div class="search-bar">
+                <input type="search" id="searchInput" placeholder="Search blogs..." oninput="searchBlogs()">
+            </div>
+        </div>
+
+        <div class="blog-list">
+            <!-- Blogs will be loaded dynamically -->
+        </div>
+    </main>
+
+    <script>
+        async function loadAllBlogs() {
+            try {
+                let response = await fetch("/getallblogs");
+                let data = await response.json();
+                let blogList = document.querySelector(".blog-list");
+                blogList.innerHTML = "";
+                if (data.status === 1 && data.blogs.length > 0) {
+                    data.blogs.reverse().forEach(post => {
+                        blogList.innerHTML += `
+                            <div class="blog-card">
+                                <img src="${post.path || 'default.jpg'}" alt="Blog Image">
+                                <h3>${post.title}</h3>
+                                <p>${post.content.slice(0, 100)}...</p>
+                                <div class="actions">
+                                    <a href="/blog/${post._id}" class="btn read-more">Read More</a>
+                                    <button class="btn delete" onclick="deleteBlogg('${post._id}')">Delete</button>
+                                </div>
+                            </div>`;
+                    });
+                } else {
+                    blogList.innerHTML = "<h3>No blogs available</h3>";
+                }
+            } catch (error) {
+                console.error("Failed to load blogs:", error);
+                alert("Error loading blogs. Please try again.");
+            }
+        }
+
+        async function deleteBlogg(blogId) {
+            if (confirm("Are you sure you want to delete this blog?")) {
+                try {
+                    let response = await fetch(`/blog/${blogId}`, { method: "DELETE" });
+                    let result = await response.json();
+                    if (result.status === 1) {
+                        alert("Blog deleted successfully!");
+                        loadAllBlogs();
+                    } else {
+                        alert("Failed to delete the blog.");
+                    }
+                } catch (error) {
+                    console.error("Error deleting blog:", error);
+                    alert("Error deleting blog. Try again.");
+                }
+            }
+        }
+
+        function searchBlogs() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            document.querySelectorAll(".blog-card").forEach(card => {
+                card.style.display = card.innerText.toLowerCase().includes(input) ? "block" : "none";
+            });
+        }
+
+        loadAllBlogs();
+    </script>
+</body>
+</html>

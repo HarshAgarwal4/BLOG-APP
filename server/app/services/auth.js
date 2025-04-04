@@ -12,7 +12,8 @@ function setUser(user){
         username: user.username,
         dob: user.dob,
         about: user.about,
-        path: user.path
+        path: user.path,
+        role: user.role
     }
     
     let token = jwt.sign(payload , secretkey)

@@ -14,7 +14,11 @@ async function signIn(req,res) {
                 secure: true,
                 sameSite: "Strict"
             });
-            res.redirect('/dashboard')  
+            if(findUser.role === "NORMAL"){
+                res.redirect('/dashboard')  
+            }else{
+                res.redirect("/admin")
+            }
         }else{
             res.redirect("/signIn")
         }
