@@ -55,12 +55,12 @@ async function sendotp(req, res) {
 }
 
 async function updatePassword(req, res) {
-    let r = await verifyOTP(email, otp)
+    let r = await verifyOTP(req.user.email, req.body.otp)
     if (r.success == true) {
         const salt = await bcrypt.genSalt(10);
-        password = await bcrypt.hash(password, salt);
+        password = await bcrypt.hash(req.body.password, salt);
         let user = await userModel.findOneAndUpdate(
-            { email: email },
+            { email: req.user.email },
             { $set: { password: password } },
             { new: true },
         );

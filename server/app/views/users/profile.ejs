@@ -232,10 +232,10 @@
             <div id="passwordForm">
                 <h2>Change Password</h2>
                 <button type="button" id="sendOtp" class="otp-btn">Send OTP</button>
-                <form id="changePasswordForm" enctype="multipart/form-data">
+                <form id="changePasswordForm">
                     <input type="text" id="otp" name="otp" placeholder="Enter OTP" required>
                     <input type="password" id="newPassword" name="password" placeholder="New Password" required>
-                    <button type="submit" class="otp-btn">Verify & Change</button>
+                    <button type="submit" class="otp-btn" id="verifybtn">Verify & Change</button>
                 </form>
             </div>
 
@@ -311,6 +311,9 @@
         });
 
         document.getElementById("sendOtp").addEventListener("click", function () {
+            let sendOtpBtn = document.getElementById("sendOtp");
+            sendOtpBtn.innerText = "Sending OTP..."
+            sendOtpBtn.disabled = true;
             let email = document.getElementById("email").value;
             fetch("/sendotp", {
                 method: "POST",
@@ -323,36 +326,56 @@
                 .then(data => {
                     if (data.status == 1) {
                         alert("OTP sent to your email!");
+                        sendOtpBtn.innerText = "Send OTP"
+                        sendOtpBtn.disabled = false;
                     } else {
-                        alert("Error sending OTP: " + data.msg);
+                        alert("OTP not sent: " + data.msg);
+                        sendOtpBtn.innerText = "Send OTP"
+                        sendOtpBtn.disabled = false;
                     }
+                }).catch(error => {
+                    console.log(error)
+                    alert("Error sending OTP: " + error.message);
+                    sendOtpBtn.innerText = "Send OTP"
+                    sendOtpBtn.disabled = false;
                 })
-                .catch(error => console.error("Error:", error));
         });
 
         document.getElementById("changePasswordForm").addEventListener("submit", function (event) {
             event.preventDefault();
-
+            let verifybtn =document.getElementById("verifybtn")
+            verifybtn.innerText = "Verifying..."
+            verifybtn.disabled = true;
             let otp = document.getElementById("otp").value;
             let password = document.getElementById("newPassword").value;
+            let email = document.getElementById("email").value;
 
             fetch("/mcafee", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ otp, password })
+                body: JSON.stringify({ otp, password, email })
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status == 1) {
                         alert("Password changed successfully!");
+                        verifybtn.innerText = "Verify & Change"
+                        verifybtn.disabled = false;
                         location.reload();
                     } else {
                         alert("Error changing password: " + data.msg);
+                        verifybtn.innerText = "Verify & Change"
+                        verifybtn.disabled = false;
                     }
                 })
-                .catch(error => console.error("Error:", error));
+                .catch(error => {
+                    alert("Error changing password: " + error.message);
+                    verifybtn.innerText = "Verify & Change"
+                    verifybtn.disabled = false; 
+                    console.error("Error:", error)}
+                );
         });
 
     </script>
